@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-mysql
+  labels:
+    app: {{ .Release.Name }}-mysql
+    {{- include "crud-app.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-mysql
+    spec:
+      containers:
+      - name: mysql
+        image: {{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag }}
+        ports:
+        - containerPort: {{ .Values.mysql.port }}
+          name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.database.secretName }}
+              key: password
+        - name: MYSQL_DATABASE
+          value: {{ .Values.database.name }}
+        resources:
+          {{- toYaml .Values.mysql.resources | nindent 10 }}
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-mysql-pvc

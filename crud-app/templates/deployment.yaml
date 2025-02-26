@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-crud-app
+  labels:
+    app: {{ .Release.Name }}-crud-app
+    {{- include "crud-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-crud-app
+      {{- include "crud-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-crud-app
+        {{- include "crud-app.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/scrape: {{ .Values.metrics.scrape | quote }}
+        prometheus.io/port: {{ .Values.metrics.port | quote }}
+        prometheus.io/path: {{ .Values.metrics.path | quote }}
+    spec:
+      containers:
+      - name: crud-app
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.httpPort }}
+          name: http
+        - containerPort: {{ .Values.metrics.port }}
+          name: metrics
+        env:
+        - name: DB_HOST
+          value: {{ .Values.database.host }}
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.database.secretName }}
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.database.secretName }}
+              key: password
+        - name: DB_NAME
+          value: {{ .Values.database.name }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.probes.readiness.path }}
+            port: {{ .Values.service.httpPort }}
+          initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.probes.liveness.path }}
+            port: {{ .Values.service.httpPort }}
+          initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.probes.liveness.periodSeconds }}

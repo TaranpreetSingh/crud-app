@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-crud-app
+  labels:
+    app: {{ .Release.Name }}-crud-app
+    {{- include "crud-app.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ .Release.Name }}-crud-app
+    {{- include "crud-app.selectorLabels" . | nindent 4 }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.httpPort }}
+    name: http
+  - port: {{ .Values.metrics.port }}
+    targetPort: {{ .Values.metrics.port }}
+    name: metrics
+  type: {{ .Values.service.type }}
