@@ -31,10 +31,10 @@ spec:
     }
     
     environment {
-        DOCKER_USERNAME = 'your-docker-username' // Replace with your Docker Hub username
+        DOCKER_USERNAME = 'taran20singh' // Replace with your Docker Hub username
         APP_NAME = 'crud-app'
         APP_VERSION = "${BUILD_NUMBER}"
-        GIT_REPO_URL = 'https://github.com/your-username/your-repo.git' // Replace with your GitHub repo URL
+        GIT_REPO_URL = 'https://github.com/TaranpreetSingh/crud-app.git' // Replace with your GitHub repo URL
         GIT_BRANCH = 'main' // Replace with your branch name
     }
     
@@ -74,9 +74,6 @@ spec:
             steps {
                 container('helm') {
                     script {
-                        // Create namespace if it doesn't exist
-                        sh "kubectl create namespace crud-app --dry-run=client -o yaml | kubectl apply -f -"
-                        
                         // Check if release exists
                         def releaseStatus = sh(script: "helm status ${APP_NAME} -n crud-app 2>&1 || true", returnStdout: true)
                         
