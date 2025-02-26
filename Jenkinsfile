@@ -10,6 +10,7 @@ metadata:
     app: jenkins-agent
 
 spec:
+  serviceAccountName: jenkins-admin
   containers:
   - name: docker
     image: docker:dind
