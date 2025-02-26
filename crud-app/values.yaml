@@ -1,0 +1,82 @@
+replicaCount: 2
+
+image:
+  repository: taran20singh/crud-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+  httpPort: 8080
+
+# Ingress configuration
+ingress:
+  enabled: true
+  host: crud-app.example.com
+
+metrics:
+  scrape: "true"
+  port: "8000"
+  path: "/metrics"
+
+database:
+  host: mysql
+  name: crud_app
+  secretName: mysql-secrets
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+probes:
+  readiness:
+    path: /users
+    initialDelaySeconds: 10
+    periodSeconds: 5
+  liveness:
+    path: /users
+    initialDelaySeconds: 15
+    periodSeconds: 10
+
+# MySQL specific configuration
+mysql:
+  image:
+    repository: mysql
+    tag: "8.0"
+  port: 3306
+  
+  service:
+    type: ClusterIP
+  
+  # Set to false if you want to use an existing secret
+  createSecret: true
+  
+  auth:
+    username: "root"
+    password: "password"
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  
+  persistence:
+    size: 1Gi
+    accessMode: ReadWriteOnce
+    storageClass: standard
+
+serviceMonitor:
+  enabled: true
+  scrapeInterval: 30s
+  scrapeTimeout: 10s
+  selector:
+    matchLabels:
+      app: crud-app
