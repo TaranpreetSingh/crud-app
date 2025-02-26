@@ -80,10 +80,10 @@ spec:
                         
                         if (releaseStatus.contains("Error: release: not found")) {
                             // Install new release
-                            sh "helm install ${APP_NAME} ./crud-app -n crud-app --set image.repository=${DOCKER_USERNAME}/${APP_NAME} --set image.tag=${APP_VERSION}"
+                            sh "helm install ${APP_NAME} ./crud-app  --set image.repository=${DOCKER_USERNAME}/${APP_NAME} --set image.tag=${APP_VERSION}"
                         } else {
                             // Upgrade existing release
-                            sh "helm upgrade ${APP_NAME} ./crud-app -n crud-app --set image.repository=${DOCKER_USERNAME}/${APP_NAME} --set image.tag=${APP_VERSION}"
+                            sh "helm upgrade ${APP_NAME} ./crud-app  --set image.repository=${DOCKER_USERNAME}/${APP_NAME} --set image.tag=${APP_VERSION}"
                         }
                     }
                 }
