@@ -60,16 +60,16 @@ spec:
             }
         }
         
-        stage('Push Docker Image') {
-            steps {
-                container('docker') {
-                    withCredentials([string(credentialsId: 'docker-hub-password', variable: 'DOCKER_PASSWORD')]) {
-                        sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
-                        sh "docker push ${DOCKER_USERNAME}/${APP_NAME}:${APP_VERSION}"
-                    }
-                }
-            }
-        }
+        // stage('Push Docker Image') {
+        //     steps {
+        //         container('docker') {
+        //             withCredentials([string(credentialsId: 'docker-hub-password', variable: 'DOCKER_PASSWORD')]) {
+        //                 sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+        //                 sh "docker push ${DOCKER_USERNAME}/${APP_NAME}:${APP_VERSION}"
+        //             }
+        //         }
+        //     }
+        // }
         
         stage('Deploy to Kubernetes with Helm') {
             steps {
