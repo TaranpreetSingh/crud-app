@@ -5,8 +5,10 @@ pipeline {
 apiVersion: v1
 kind: Pod
 metadata:
+  namespace: jenkins
   labels:
     app: jenkins-agent
+
 spec:
   containers:
   - name: docker
