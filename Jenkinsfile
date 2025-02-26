@@ -46,8 +46,7 @@ spec:
                 
                 // Checkout from Git
                 git branch: "${GIT_BRANCH}", 
-                    url: "${GIT_REPO_URL}", 
-                    credentialsId: 'github-credentials' // Create these credentials in Jenkins
+                    url: "${GIT_REPO_URL}"
             }
         }
         
